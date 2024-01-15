@@ -38,7 +38,7 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(Snake const snake, SDL_Point const &food) {
+void Renderer::Render(Snake const snake, std::shared_ptr<SDL_Point> const &normalFood, std::shared_ptr<SDL_Point> const &poisonFood, Obstacle* const obstacle) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -47,10 +47,25 @@ void Renderer::Render(Snake const snake, SDL_Point const &food) {
   SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
   SDL_RenderClear(sdl_renderer);
 
-  // Render food
+  // Render normal food
+  //giving it the green color
+  SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0xFF, 0x00, 0xFF);
+  block.x = normalFood->x * block.w;
+  block.y = normalFood->y * block.h;
+  SDL_RenderFillRect(sdl_renderer, &block);
+
+  // Render poison food
+  // giving it the orange color
   SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xCC, 0x00, 0xFF);
-  block.x = food.x * block.w;
-  block.y = food.y * block.h;
+  block.x = poisonFood->x * block.w;
+  block.y = poisonFood->y * block.h;
+  SDL_RenderFillRect(sdl_renderer, &block);
+  
+  // Render obstacle
+  // giving it the red color
+  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
+  block.x = obstacle->obst.x * block.w;
+  block.y = obstacle->obst.y * block.h;
   SDL_RenderFillRect(sdl_renderer, &block);
 
   // Render snake's body

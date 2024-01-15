@@ -2,6 +2,13 @@
 #include <cmath>
 #include <iostream>
 
+Snake::Snake(int grid_width, int grid_height)
+      : grid_width(grid_width),
+        grid_height(grid_height),
+        head_x(grid_width / 2),
+        head_y(grid_height / 2),
+  		obstacle(new Obstacle(grid_width, grid_height)) {} //declaring the pointer of obstacle object
+
 void Snake::Update() {
   SDL_Point prev_cell{
       static_cast<int>(head_x),
@@ -46,12 +53,18 @@ void Snake::UpdateHead() {
 void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) {
   // Add previous head location to vector
   body.push_back(prev_head_cell);
-
-  if (!growing) {
+  //changing the conditions to include shrinking also
+  if (!growing && !shrinking) {
     // Remove the tail from the vector.
     body.erase(body.begin());
+  //reduce the size when shrinking
+  } else if (!growing && shrinking){
+    shrinking = false;
+    growing = false;
+    size--;
   } else {
     growing = false;
+    shrinking = false;
     size++;
   }
 
@@ -61,9 +74,25 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
       alive = false;
     }
   }
+  
+  //3- snake dies if it eats the obstacle
+  if (current_head_cell.x == obstacle->obst.x && current_head_cell.y == obstacle->obst.y) {
+    alive = false;
+  }  
 }
 
 void Snake::GrowBody() { growing = true; }
+
+void Snake::ShrinkBody() {
+  // reducing the snake's body size if it equals to or greater than 1
+  if(body.size() >= 1) {
+    body.pop_back();
+    size--;
+    //otherwise the snake dies
+  } else {
+    alive = false;
+  }
+}
 
 // Inefficient method to check if cell is occupied by snake.
 bool Snake::SnakeCell(int x, int y) {

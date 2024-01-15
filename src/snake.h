@@ -3,16 +3,15 @@
 
 #include <vector>
 #include "SDL.h"
+#include "obstacle.h"
+
+class Obstacle;
 
 class Snake {
  public:
   enum class Direction { kUp, kDown, kLeft, kRight };
 
-  Snake(int grid_width, int grid_height)
-      : grid_width(grid_width),
-        grid_height(grid_height),
-        head_x(grid_width / 2),
-        head_y(grid_height / 2) {}
+  Snake(int grid_width, int grid_height);
 
   void Update();
 
@@ -28,6 +27,9 @@ class Snake {
   float head_y;
   std::vector<SDL_Point> body;
 
+  void ShrinkBody(); //2- function to shrink the body when eating poison
+  
+  Obstacle *obstacle; //3- obstacle object as a pointer
  private:
   void UpdateHead();
   void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
@@ -35,6 +37,8 @@ class Snake {
   bool growing{false};
   int grid_width;
   int grid_height;
+  
+  bool shrinking{false}; //2- bool shrinking like growing
 };
 
 #endif

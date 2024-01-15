@@ -30,7 +30,6 @@ In this project, you can build your own C++ application or extend this Snake gam
 3. Compile: `cmake .. && make`
 4. Run it: `./SnakeGame`.
 
-
 ## CC Attribution-ShareAlike 4.0 International
 
 
@@ -44,3 +43,55 @@ This work is licensed under a
 [cc-by-sa]: http://creativecommons.org/licenses/by-sa/4.0/
 [cc-by-sa-image]: https://licensebuttons.net/l/by-sa/4.0/88x31.png
 [cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg
+
+
+## The new Features
+
+1. the player can enter a name and starts to play, and their score will be saved in a text file called "players_scores". This feature works as follows:
+	* if the player enters a name that is already in the file, the program automatically takes the highst score, which could be the new one or the old one.
+    * I have added std::async to launch an asynchronous task which is reading/writing in the file. (this should allow the game to keep running while 
+      the score is being updated in the file in the background. 
+
+2. I changed the food type to a shared pointer and added one new type of food, which is poison. this works as follows:
+	* If the snake eats normal food, the score is increased by 1, and the speed is increased by 0.02.
+    * If the snake eats poison food, the score is decreased by 1, and the speed is decreased by 0.02.
+    * If the snake eats poison and its size is already one (just the head), the snake dies immediately.
+    * The color of normal food is green, and the color of poison is orange.
+    * The poison doesn't always have to appear.
+
+3. I added new files obstacle.h and obstacle.cpp to add one obstacle to the game. It works as follows:
+	* The obstacle only appears when the score is 8 or higher (for testing, you can reduce the number in obstacle.cpp).
+    * Let's assume the score is 8 now, and the obstacle appears. If the snake eats poison and the score becomes 7, the obstacle should disappear again.
+    * The snake dies immediately as soon as it eats the obstacle.
+    * the color of the obstacle is red.
+
+4. The last change is not a new feature.
+	* for protecting the shared data (score) I have added mutex and lock_guard.
+
+## covered Rubric Points
+
+1. Loops, Functions, I/O:
+	In file game.cpp, lines 135 - 207. in game.h declaration of functions and variables defined.
+	* The project demonstrates an understanding of C++ functions and control structures.
+    * The project reads data from a file and process the data, or the program writes data to a file.
+    * The project accepts user input and processes the input.
+    * The project uses data structures and immutable variables.
+
+2. Object Oriented Programming:
+	files obstacle.h and obstacle.cpp.
+	* One or more classes are added to the project with appropriate access specifiers for class members.
+    * Class constructors utilize member initialization lists.
+    * Classes abstract implementation details from their interfaces.
+
+3. Memory Management:
+	for using shared pointers In file game.h (44-45). in game.cpp (15-16), every place in the code, the ( . ) changes to ( -> ).
+    using references in function declarations: (game.cpp line 136 in function PlayerName()) and in (renderer.cpp line 41 in function Render(..)). 
+	* The project makes use of references in function declarations.
+    * The project uses smart pointers instead of raw pointers.
+
+4. Concurrency:
+	using mutex in (game.cpp function Update() line 89 and GetScore() lines 128-132).
+    using async task in the execution in (game.cpp function HighScore() line 132-207). 
+	* The project uses multithreading. (async tasks in the execution.)
+    * A mutex or lock is used in the project.
+ 
